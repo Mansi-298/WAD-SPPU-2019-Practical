@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+    </head>
+    <body class="p-5">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">Add New User</button>
+        <a href="user.html" class="btn btn-success">View User List</a>
+
+        <!-- modal -->
+        <div class="modal fade" id="userModal">
+            <div class="modal-dialog">
+                <form id="userForm" class="modal-content">
+                    <div class="modal-header">
+                        <h3>Register User</h3>
+                        <button type="button" class="btn btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mt-2">
+                            <label>Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mt-2">
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="email" required>
+                        </div>
+                        <div class="mt-2">
+                            <label>Age</label>
+                            <input type="number" class="form-control" name="age" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Register</button>
+                    </div>
+                </form>
+            </div>
+         </div>
+
+         <script>
+            const userForm = document.getElementById("userForm");
+          
+            userForm.addEventListener('submit', function(e) {
+              e.preventDefault();
+          
+              const formData = new FormData(userForm);
+              const user = Object.fromEntries(formData.entries());
+          
+              const xhr = new XMLHttpRequest();
+              xhr.open('POST', '/register', true);
+              xhr.setRequestHeader('Content-Type','application/json');
+          
+              xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                  if (xhr.status === 200 || xhr.status === 0) {
+                    let users = JSON.parse(localStorage.getItem('users')) || [];
+                    users.push(user);
+                    localStorage.setItem('users', JSON.stringify(users)); // ✅ Fixed this line
+                    
+                    alert("registered success");
+                    userForm.reset();
+          
+                    const modal = bootstrap.Modal.getInstance(document.getElementById("userModal"));
+                    modal.hide();
+                  } else {
+                    alert("error");
+                  }
+                }
+              };
+          
+              xhr.send(JSON.stringify(user));
+            });
+          </script>
+    </body>
+</html>
